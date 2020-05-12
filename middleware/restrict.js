@@ -1,17 +1,39 @@
-function restrict() {
+const jwt = require("jsonwebtoken")
+const authModel = require("../auth/auth-model")
+
+const roles = ["normal", "admin"]
+
+function restrict(role = "normal") {
 	return async (req, res, next) => {
 		const authError = {
 			message: "Invalid credentials",
 		}
 
 		try {
-			// express-session will automatically get the session ID from the cookie
-			// header, and check to make sure it's valid and the session for this user exists.
-			if (!req.session || !req.session.user) {
+			const token = req.cookies.token
+ 			if (!token) {
 				return res.status(401).json(authError)
 			}
 
-			next()
+			jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+				try {
+					// validate role based on a scale, so admins can
+					// still access resources restricted to normal users
+					if (err || roles.indexOf(decoded.role) < role) {
+						return res.status(401).json(authError)
+					}
+					
+					// look up session from database and make sure it's not expired
+					req.session = await authModel.findById(decoded.sessionId)
+					if (!req.session || new Date(req.session.expires) <= new Date()) {
+						return res.status(401).json(authError)
+					}
+
+					next()
+				} catch(err) {
+					next(err)
+				}
+			})
 		} catch(err) {
 			next(err)
 		}
