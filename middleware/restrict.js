@@ -19,7 +19,7 @@ function restrict(role = "normal") {
 				try {
 					// validate role based on a scale, so admins can
 					// still access resources restricted to normal users
-					if (err || roles.indexOf(decoded.role) < role) {
+					if (err || roles.indexOf(decoded.role) < roles.indexOf(role)) {
 						return res.status(401).json(authError)
 					}
 					
