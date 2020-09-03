@@ -1,9 +1,6 @@
 # Mac files
 .DS_Store
 
-# Removes database
-auth.db3
-
 # Logs
 logs
 *.log

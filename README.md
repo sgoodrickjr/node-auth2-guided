@@ -6,7 +6,7 @@ _If you're looking for the old project for `Using Sessions and Cookies`, you can
 
 ## Prerequisites
 
-- [DB Browser for SQLite](https://sqlitebrowser.org) installed.
+- [TablePlus](https://tableplus.com) installed.
 - A rest client like [Insomnia](https://insomnia.rest/download/) or [Postman](https://www.getpostman.com/downloads/) installed.
 
 ## Project Setup
