@@ -16,7 +16,7 @@ router.get("/users", restrict(), async (req, res, next) => {
 router.post("/users", async (req, res, next) => {
 	try {
 		const { username, password } = req.body
-		const user = await Users.findBy({ username }).first()
+		const user = await Users.findByUsername(username)
 
 		if (user) {
 			return res.status(409).json({
@@ -39,7 +39,7 @@ router.post("/users", async (req, res, next) => {
 router.post("/login", async (req, res, next) => {
 	try {
 		const { username, password } = req.body
-		const user = await Users.findBy({ username }).first()
+		const user = await Users.findByUsername(username)
 		
 		if (!user) {
 			return res.status(401).json({
