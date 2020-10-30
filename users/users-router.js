@@ -1,11 +1,12 @@
 const express = require("express")
 const bcrypt = require("bcryptjs")
+const jwt = require("jsonwebtoken")
 const Users = require("./users-model")
 const { restrict } = require("./users-middleware")
 
 const router = express.Router()
 
-router.get("/users", restrict(), async (req, res, next) => {
+router.get("/users", restrict("admin"), async (req, res, next) => {
 	try {
 		res.json(await Users.find())
 	} catch(err) {
@@ -58,8 +59,16 @@ router.post("/login", async (req, res, next) => {
 
 		// generate a new session for this user,
 		// and sends back a session ID
-		req.session.user = user
+		// req.session.user = user
 
+		const token = jwt.sign({
+			userID: user.id,
+			userRole: user.role,
+		}, process.env.JWT_SECRET)
+
+		// this is how we set a cookie manually
+		// cookies get set up with every request to persist login auth
+		res.cookie("token", token)
 		res.json({
 			message: `Welcome ${user.username}!`,
 		})
